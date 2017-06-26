@@ -1,0 +1,30 @@
+PracticeIntent practice
+PracticeIntent übung
+PracticeIntent übe
+PracticeIntent üben
+PracticeIntent test
+PracticeIntent starte übung
+PracticeIntent übung starten
+PracticeIntent teste
+PracticeIntent testen
+PracticeIntent beginne übung
+PracticeIntent fange an
+PracticeIntent übungs-modus
+QuizIntent quiz
+QuizIntent prüfung
+QuizIntent prüfung starten
+QuizIntent prüfe
+QuizIntent prüfen
+QuizIntent starte prüfung
+QuizIntent beginne prüfung
+QuizIntent prüf-modus
+AnswerIntent ist es {article}
+AnswerIntent ist das {article}
+AnswerIntent {article} vielleicht
+AnswerIntent vielleicht {article}
+AnswerIntent {article}
+AnswerIntent {article} {word}
+AnswerIntent antwort ist {article}
+AnswerIntent ich sage {article}
+AnswerIntent {article} oder
+AnswerIntent {article} oder {word}

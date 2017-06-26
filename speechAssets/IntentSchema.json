@@ -1,0 +1,38 @@
+{
+  "intents": [
+    {
+      "intent": "PracticeIntent"
+    },
+    {
+      "intent": "QuizIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "article",
+          "type": "GERMAN_ARTICLE"
+        },
+        {
+          "name": "word",
+          "type": "CUSTOM_LITERAL"
+        }
+      ],
+      "intent": "AnswerIntent"
+    },
+    {
+      "intent": "AMAZON.YesIntent"
+    },
+    {
+      "intent": "AMAZON.NoIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}

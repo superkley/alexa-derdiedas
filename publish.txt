@@ -1,0 +1,23 @@
+Short Description: 
+Der-Die-Das-Quiz. Bei diesem Quiz wird der Artikel von den häufigsten deutschen Wörtern abgefragt.
+
+
+Full Description: 
+Welcher Artikel ist richtig, der, die oder das? Das Artikel-Quiz beinhaltet über etwa 900 Wörter aus dem Grundwortschatz von  Wiktionary.org sowie Auszug vom Deutschlehrplan für die Grundschule.
+
+Das Quiz-Spiel ist geeignet für Kinder oder als Begleitübung zum Deutschlernen für Ausländer.
+
+
+
+Test Cases:
+Übung-Modus: Alle Wörter werden gemischt und abgefragt.
+- Start: 'Übung starten'
+- Während des Spiels:  'Der', 'Die' oder 'Das' sagen, ...
+- Übung-Modus abbrechen: 'Abbrechen' (Auffrisch-Modus: falsch beantwortete Wörter werden wiederholt)
+- Skill beenden: 'Stop'
+
+Prüf-Modus: genau 10 Wörter werden abgefragt
+- Start: 'Prüfung starten'
+- Während des Spiels:  'Der', 'Die' oder 'Das' sagen, ...
+- Prüf-Modus abbrechen: 'Abbrechen' (Ergebnis wird in der APP angezeigt.)
+- Skill beenden: 'Stop'

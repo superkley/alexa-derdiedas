@@ -1,0 +1,13 @@
+GERMAN_ARTICLE
+
+der
+die
+das
+
+
+
+CUSTOM_LITERAL
+
+der
+die
+das

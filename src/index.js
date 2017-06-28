@@ -1,4 +1,5 @@
 var Alexa = require('alexa-sdk');
+// var config = require('./data/basiswortschatz');
 
 const options = {
     QUESTIONS_PER_QUIZ: 10,
@@ -12,7 +13,7 @@ var languageStrings = {
              'WELCOME_LAUNCH':"Hallo. Hier ist das %s. Sag 'Üben' oder 'Prüfen' um das Quiz zu starten.",
              'WELCOME_PRACTICE' : 'Die Übung beginnt jetzt. ',
              'WELCOME_QUIZ': '%s Wörter werden abgefragt. Die Prüfung beginnt jetzt. ',
-             'HELP_MESSAGE': "Sag 'Üben', um Übungsmodus zu starten. Oder sag 'Prüfen', wenn du eine Prüfung ablegen möchtest."
+             'HELP_MESSAGE': "Das Quiz hat zwei Modi, 'Üben' und 'Prüfen'. Während des Spiels, kannst du jederzeit 'Abbrechen' rufen, um es vorzeitig zu beenden. Möchtest du jetzt 'Üben' oder 'Prüfen'?"
          }
      }
 };
@@ -937,7 +938,7 @@ var startSessionHandlers = Alexa.CreateStateHandler(states.START, {
         this.attributes['oldWrongList'] = [];
         this.attributes['seed'] = randomSeed();
         this.attributes['practice'] = true; 
-        this.emit(':ask', this.t("WELCOME_LAUNCH", this.t("TITLE") ));
+        this.emit(':ask', this.t("WELCOME_LAUNCH", this.t("TITLE") ), 'Üben oder Prüfen?');
     },
     "PracticeIntent": function() {
         console.log("start> practice intent");
@@ -951,7 +952,7 @@ var startSessionHandlers = Alexa.CreateStateHandler(states.START, {
     },
     "AMAZON.HelpIntent": function() {
         console.log("start> help intent");
-        this.emit(':ask', this.t("HELP_MESSAGE", questionList.length, options.QUESTIONS_PER_QUIZ));
+        this.emit(':ask', this.t("HELP_MESSAGE", questionList.length, options.QUESTIONS_PER_QUIZ), 'Üben oder Prüfen?');
     },
     "AMAZON.CancelIntent": function() {
         console.log("start> cancel intent");
@@ -963,7 +964,7 @@ var startSessionHandlers = Alexa.CreateStateHandler(states.START, {
     },
     'Unhandled': function() {  // if we get any intents other than the above
         console.log("start> unhandled");
-        this.emit(':ask', 'Ich habe dich nicht verstanden! Üben oder Prüfen?', 'Üben oder Prüfen!');
+        this.emit(':ask', 'Ich habe dich nicht verstanden! Üben oder Prüfen?', 'Üben oder Prüfen?');
     }    
 });
 
@@ -1006,12 +1007,11 @@ var practiceHandlers = Alexa.CreateStateHandler(states.PRACTICE, {
         } else {
             myState = this.event.request.intent.slots.article.value;
             this.emit('rateAnswer', myState, (say) => {
-
                 var currentQuestionIndex = this.attributes['currentQuestionIndex'];
                 var questions = getQuestionList(this.attributes);
                 if (currentQuestionIndex < questions.length) {  // MORE QUESTIONS
-                    say = say +  ' Nächstes Wort.  ' + questionList[questions[currentQuestionIndex]].question + '. Der, Die oder Das?';
-                    this.emit(':ask', say);
+                    say = say +  ' Nächstes Wort.    "' + questionList[questions[currentQuestionIndex]].question + '".   Der, Die oder Das?';
+                    this.emit(':ask', say, 'Der, Die oder Das?');
                 } else {   // YOU ARE DONE
                     this.handler.state = states.RECAP_PRACTICE;
                     this.emitWithState('RecapSession', say);
@@ -1032,11 +1032,13 @@ var practiceHandlers = Alexa.CreateStateHandler(states.PRACTICE, {
     },
     'AMAZON.HelpIntent': function () {  // practice help
         console.log("practice> help intent");
-        this.emit(':ask', 'Der, Die oder Das' );
+        this.emitWithState('Unhandled');
     },
     'Unhandled': function() {  // if we get any intents other than the above
         console.log("practice> unhandled");
-        this.emit(':ask', 'Ich habe dich nicht verstanden! Sag bitte noch einmal.', 'Der, Die oder Das!');
+        var currentQuestionIndex = this.attributes['currentQuestionIndex'];
+        var questions = getQuestionList(this.attributes);
+        this.emit(':ask', questionList[questions[currentQuestionIndex]].question + '. Der, Die oder Das?', 'Der, Die oder Das?');
     }
 });
 
@@ -1058,7 +1060,7 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         this.attributes['practice'] = false; 
         var questions = getQuestionList(this.attributes);
         say += 'Welchen Artikel hat das Wort  ' + questionList[questions[0]].question + '?';
-        this.emit(':ask', say);
+        this.emit(':ask', say, 'Der, Die oder Das?');
 
     },
     'AnswerIntent': function() {
@@ -1066,7 +1068,7 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         var myState = '';
 
         if ( !this.event.request.intent.slots.article || this.event.request.intent.slots.article.value == '') {
-            this.emitWithState('AMAZON.HelpIntent');  // emitWithState = local version of this handler
+            this.emitWithState('Unhandled');  // emitWithState = local version of this handler
 
         } else {
             myState = this.event.request.intent.slots.article.value;
@@ -1097,7 +1099,9 @@ var quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
     },
     'Unhandled': function() {
         console.log("quiz> unhandled");
-        this.emit(':ask', 'Ich habe dich nicht verstanden! Sag bitte noch einmal.', 'Der, Die oder Das!');
+        var currentQuestionIndex = this.attributes['currentQuestionIndex'];
+        var questions = getQuestionList(this.attributes);
+        this.emit(':ask', questionList[questions[currentQuestionIndex]].question + '. Der, Die oder Das?', 'Der, Die oder Das?');
     }
 });
 
@@ -1116,7 +1120,7 @@ var recapPracticeHandlers = Alexa.CreateStateHandler(states.RECAP_PRACTICE, {
 
         if (this.attributes['wrongCount'] == 0) {
             say += '  Möchtest du einen weiteren Versuch starten? ';
-            this.emit(':ask', say);
+            this.emit(':ask', say, say);
         } else {
             say = say   +  ' Die falsch beantworteten Wörtern werden in deiner Alexa APP angezeigt. ';
             say += ' Möchtest du sie nochmal wiederholen? ';
@@ -1139,9 +1143,9 @@ var recapPracticeHandlers = Alexa.CreateStateHandler(states.RECAP_PRACTICE, {
     },
     'AMAZON.NoIntent': function () {  //
         console.log("repractice> no intent");
-        var say = 'Sag "Stop" um das Quiz zu beenden oder sag "Üben" oder "Prüfen", um ein neues Spiel zu starten!';
+        var say = 'Sag "Beenden" um das Quiz zu beenden oder sag "Üben" oder "Prüfen", um ein neues Spiel zu starten!';
         this.handler.state = states.START;
-        this.emit(':ask', say);
+        this.emit(':ask', say, say);
     },
     'Unhandled': function() {
         console.log("repractice> unhandled");
@@ -1189,7 +1193,7 @@ var recapQuizHandlers = Alexa.CreateStateHandler(states.RECAP_QUIZ, {
         console.log("requiz> no intent");
         var say = 'Sag "Stop" um das Quiz zu beenden oder sag "Üben" oder "Prüfen", um ein neues Spiel zu starten!';
         this.handler.state = states.START;
-        this.emit(':ask', say);
+        this.emit(':ask', say, say);
     },
     'Unhandled': function() {
         console.log("requiz> unhandled");
